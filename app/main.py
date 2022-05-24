@@ -275,6 +275,8 @@ def main(argv):
     # ----------- PREPARE SCENE ----------
     hl.Init(1920, 1080, want_activate_VR) # if VR not detected but wanted, hl.gVal.activate VR is turned to False, and all the app works without VR
 
+    hl.SetHGUI_3D()
+
     hl.LoadSceneFromAssets("reachy.scn", hl.gVal.scene, hl.gVal.res, hl.GetForwardPipelineInfo())
 
     hl.AddFpsCamera(2, 1.5, 0, pi / 8, - pi / 2)  # Set the current camera as a fps camera
@@ -323,9 +325,11 @@ def main(argv):
         # gui_debug_model_rotation()
 
         # GUI panel to manually set targets for both Reachy's arms (without VR) or to invert hands controlled by the VR controllers (with VR).
+
         if hl.ImGuiBegin("Window"):
 
             if hl.gVal.activate_VR:
+
                 change, node_controller_type = hl.ImGuiCombo("Controller type", node_controller_type, ["Oculus", "Vive"])
                 if change:
                     controller_left_node.Disable()
@@ -353,6 +357,20 @@ def main(argv):
                 change, vec_pos_target_left = hl.ImGuiSliderVec3("Target pos left hand", vec_pos_target_left, -0.5, 1.0)
 
         hl.ImGuiEnd()
+
+
+        if hl.gVal.activate_VR:
+            if hl.hgui.begin_window("my_window",  hl.Vec3(1.125, 1.55, 280/500/2), hl.Deg3(0, 90, 0), hl.Vec3(280, 46, 0), 1/500 ): # 0.8
+                if hl.hgui.button("SetLeft"):
+                    flag_set_left_controller = True
+                hl.hgui.same_line()
+                if hl.hgui.button("SetRight"):
+                    flag_set_right_controller = True
+                hl.hgui.same_line()
+                if hl.hgui.button("Invert hand"):
+                    controller_swap_side = True
+                hl.hgui.end_window()
+
 
         dist_to_reachy = 0
         flag_activate_calibration = False
